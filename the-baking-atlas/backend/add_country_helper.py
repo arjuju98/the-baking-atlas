@@ -19,7 +19,7 @@ def add_new_country():
         # ===== EDIT THIS SECTION TO ADD YOUR COUNTRY =====
         
         # Check if country already exists
-        country_code = "IT"  # Change this
+        country_code = "CA"  # Change this
         existing = db.query(Country).filter(Country.code == country_code).first()
         if existing:
             print(f"❌ Country {country_code} already exists!")
@@ -27,13 +27,13 @@ def add_new_country():
         
         # Create the country
         new_country = Country(
-            name="Italy",  # Change this
-            code="IT",      # Change this
-            region="Southwestern Europe",  # Change this
-            overview="Italian pastry culture is defined by its strong regional diversity and deep family-oriented values. Italian pastries rely heavily on local ingredients and are often less sweet than other types, relying on natural sweetness from ingredients like citrus, nuts and fresh fruit.",  # Change this
+            name="Canada",  # Change this
+            code="CA",      # Change this
+            region="North America",  # Change this
+            overview="Canadian baking blends international influence from its rich immigrant history with a strong modern focus on health-conscious and artisinal specialty goods.",  # Change this
             extra_data={
-                "baking_history": "Initial pastries from Ancient Roman times were simple confections made with honey, nuts and dried fruits. Over time, new ingredients like sugar, cocoa and vanilla enriched the variety of pastries.",
-                "bakery_culture": "Arab rule in Sicily influenced the development of the cannoli in the 9th century, while monastic influence can be credited for the creation of other pastries like the sfogliatella in the 17th century."
+                "baking_history": "Early Canadian baking was shaped by French and British traditions, which led to unique dishes like the butter tart. The 20th century saw the rise of commerical baking and the government fortification of bread.",
+                "bakery_culture": "Modern Canadian baking culture has started to skew towards healthier options. While classic goods like pies and donuts are still popular, Canada has seen an increased demand for desserts under the gluten-free or natural sugar umbrella, like date squares or oatcakes."
             }
         )
         db.add(new_country)
@@ -45,19 +45,19 @@ def add_new_country():
         baked_goods = [
             BakedGood(
                 country_id=new_country.id,
-                name="Cannolo (Cannoli)",
-                description="Tube-shaped, fried pastry shell with sweet filling",
+                name="Butter Tart",
+                description="Flaky pastry shell with sweet, gooey filling",
                 category="pastry",
-                extra_data={"shell texture": "crisp and flaky",
-                            "filling": "smooth and rich"}
+                extra_data={"consistency": "center can be either runny/gooey or firm, based on user preference",
+                            "additions": "raisins" "currants" "pecans"}
             ),
             BakedGood(
                 country_id=new_country.id,
-                name="Sfogliatella",
-                description="Shell-shaped, flaky pastry with sweet filling",
-                category="pastry",
-                extra_data={"texture": "crispy", "flaky": "thin",
-                            "meaning": "translated to - small, thin leaf"}
+                name="Date Squares",
+                description="Sweet date filling sandwiched between crumbly oatmeal layers",
+                category="bar",
+                extra_data={"other names": "date crumbles" "matrimonial cake",
+                            "flavor profile": "balance of sweet and salty"}
             ),
             # Add more baked goods here
         ]
@@ -70,15 +70,15 @@ def add_new_country():
         ingredients = [
             Ingredient(
                 country_id=new_country.id,
-                name="Ricotta",
-                description="provides creaminess found in many Italian pastries",
-                extra_data={"fat_content": "82% minimum"}
+                name="Maple Syrup",
+                description="Canadian sweetener used in many recipes, from breakfast to dessert",
+                extra_data={"alternatives": "sugar"}
             ),
             Ingredient(
                 country_id=new_country.id,
-                name="Semolina",
-                description="Used in dough, adds slightly coarse texture",
-                extra_data={"flavor_notes": "vital in introducing nutty flavor"}
+                name="Berries",
+                description="Wide array of native berries are used, especially in regional desserts",
+                extra_data={"types": "saskatoon" "partridgeberries" "chokecherries"}
             ),
             # Add more ingredients here
         ]
