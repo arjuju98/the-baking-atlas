@@ -1,4 +1,3 @@
-
 * {
   margin: 0;
   padding: 0;
@@ -7,9 +6,10 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: #f5f7fa;
   min-height: 100vh;
-  width: 100%
+  width: 100%;
+  overflow: hidden; /* Prevent body scroll - map handles it */
 }
 
 #root {
@@ -18,288 +18,80 @@ body {
 }
 
 .app {
-  max-width: 90%;  /* Change from 1400px */
-  margin: 0 auto;
-  padding: 20px;
   width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
+/* Fixed Header */
 .header {
-  text-align: center;
-  padding: 40px 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin-bottom: 30px;
+  border-bottom: 1px solid #e9ecef;
+  z-index: 900;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.header h1 {
-  font-size: 2.5rem;
-  color: #2c3e50;
-  margin-bottom: 10px;
-}
-
-.header p {
-  color: #7f8c8d;
-  font-size: 1.1rem;
-}
-
-.main-content {
-  background: white;
-  border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  min-height: 400px;
-  width: 100%;  /* ADD THIS LINE */
-}
-
-.loading {
-  text-align: center;
-  padding: 60px;
-  font-size: 1.2rem;
-  color: #7f8c8d;
-}
-
-.error-message {
-  background: #fee;
-  border: 1px solid #fcc;
-  color: #c33;
-  padding: 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-/* Country List Styles */
-.country-list h2 {
-  margin-bottom: 25px;
-  color: #2c3e50;
-}
-
-.country-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.country-card {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 30px;
-  border-radius: 12px;
-  cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.country-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.country-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
-
-.country-code {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  font-weight: 600;
-}
-
-.region {
-  font-size: 0.85rem;
-  opacity: 0.8;
-  margin-top: 8px;
-}
-
-/* Country Detail Styles */
-.country-detail {
-  animation: fadeIn 0.3s ease-in;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.back-button {
-  background: #3498db;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  margin-bottom: 20px;
-  transition: background 0.2s;
-}
-
-.back-button:hover {
-  background: #2980b9;
-}
-
-.country-header {
+.header-content {
+  max-width: 100%;
+  height: 100%;
+  padding: 0 30px;
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-  border-bottom: 2px solid #ecf0f1;
+  justify-content: space-between;
 }
 
-.country-header h2 {
-  font-size: 2rem;
+.header-left h1 {
+  font-size: 1.5rem;
   color: #2c3e50;
+  margin: 0;
+  margin-bottom: 2px;
 }
 
-.country-code-large {
-  background: #667eea;
-  color: white;
-  padding: 5px 15px;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
+.header-left p {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  margin: 0;
 }
 
-.region-tag {
-  display: inline-block;
-  background: #f8f9fa;
-  padding: 8px 16px;
-  border-radius: 20px;
-  color: #555;
-  margin-bottom: 25px;
-  font-size: 0.95rem;
-}
-
-.section {
-  margin-bottom: 35px;
-}
-
-.section h3 {
-  color: #2c3e50;
-  font-size: 1.4rem;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #ecf0f1;
-}
-
-.section p {
-  color: #555;
-  line-height: 1.6;
-  font-size: 1rem;
-}
-
-.extra-data {
-  background: #f8f9fa;
-  padding: 15px;
-  border-radius: 8px;
-  margin-top: 10px;
-}
-
-.data-item {
-  margin-bottom: 10px;
-  color: #555;
-}
-
-.data-item strong {
-  color: #2c3e50;
-  text-transform: capitalize;
-}
-
-/* Items Grid (Baked Goods & Ingredients) */
-.items-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+.header-right {
+  display: flex;
+  align-items: center;
   gap: 20px;
-  margin-top: 15px;
 }
 
-.item-card {
-  background: #f8f9fa;
-  border: 1px solid #e9ecef;
-  padding: 20px;
-  border-radius: 12px;
-  transition: box-shadow 0.2s;
-}
-
-.item-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.item-card h4 {
-  color: #2c3e50;
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-}
-
-.category-badge {
-  display: inline-block;
-  background: #667eea;
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-.item-card p {
-  color: #666;
-  line-height: 1.5;
-  margin-bottom: 15px;
-}
-
-.item-extra {
-  margin-top: 15px;
-  padding-top: 15px;
-  border-top: 1px solid #dee2e6;
-}
-
-.extra-detail {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 8px;
-}
-
-.extra-detail strong {
-  color: #2c3e50;
-  text-transform: capitalize;
-}
-
-/* View Toggle Button */
-.view-toggle {
-  margin-top: 15px;
-  background: #3498db;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
-  cursor: pointer;
+.about-link {
+  color: #3498db;
+  text-decoration: none;
   font-size: 0.95rem;
-  transition: background 0.2s;
+  font-weight: 500;
+  transition: color 0.2s;
 }
 
-.view-toggle:hover {
-  background: #2980b9;
+.about-link:hover {
+  color: #2980b9;
 }
 
-/* Map Styles */
+/* Full-screen Map Container */
+.map-container-wrapper {
+  position: fixed;
+  top: 64px; /* Below header */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+/* Map Styles (from WorldMap component) */
 .map-container {
   position: relative;
   width: 100%;
-  height: 600px;
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin: 0 auto;  /* ADD THIS LINE */
+  height: 100%;
 }
 
 .map {
@@ -319,7 +111,7 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   font-size: 0.95rem;
   color: #2c3e50;
-  z-index: 1000;
+  z-index: 10;
   pointer-events: none;
   font-weight: 500;
 }
@@ -333,7 +125,7 @@ body {
 }
 
 .country-marker:hover {
-  z-index: 1000 !important;
+  z-index: 100 !important;
 }
 
 .marker-pin {
@@ -378,7 +170,7 @@ body {
 
 .marker-hover {
   transform: scale(1.2);
-  z-index: 1000 !important;
+  z-index: 100 !important;
 }
 
 .marker-hover .marker-pin {
@@ -397,24 +189,23 @@ body {
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .header h1 {
-    font-size: 2rem;
+  .header {
+    height: 56px;
   }
   
-  .country-grid {
-    grid-template-columns: 1fr;
+  .header-content {
+    padding: 0 20px;
   }
   
-  .items-grid {
-    grid-template-columns: 1fr;
+  .header-left h1 {
+    font-size: 1.2rem;
   }
   
-  .country-header {
-    flex-direction: column;
-    align-items: flex-start;
+  .header-left p {
+    font-size: 0.75rem;
   }
   
-  .map-container {
-    height: 400px;
+  .map-container-wrapper {
+    top: 56px;
   }
 }
