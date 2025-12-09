@@ -17,8 +17,14 @@ function InfoPanel({ isOpen, countryData, loading, error, onClose }) {
       <div className={`info-panel ${isOpen ? 'open' : ''}`}>
         {/* Fixed Panel Header */}
         <div className="panel-header">
-          <button 
-            className="close-button" 
+          {countryData && (
+            <div className="country-title">
+              <h1>{countryData.name}</h1>
+              <span className="country-code-badge">{countryData.code}</span>
+            </div>
+          )}
+          <button
+            className="close-button"
             onClick={onClose}
             aria-label="Close panel"
           >
@@ -29,16 +35,16 @@ function InfoPanel({ isOpen, countryData, loading, error, onClose }) {
         {/* Scrollable Content Area */}
         <div className="panel-content">
           {loading && <LoadingSkeleton />}
-          
+
           {error && (
             <div className="panel-error">
               <p>⚠️ {error}</p>
               <button onClick={onClose}>Close</button>
             </div>
           )}
-          
+
           {!loading && !error && countryData && (
-            <CountryContent country={countryData} />
+            <CountryContent country={countryData} showTitle={false} />
           )}
         </div>
       </div>
@@ -64,15 +70,17 @@ function LoadingSkeleton() {
 }
 
 // Main country content component
-function CountryContent({ country }) {
+function CountryContent({ country, showTitle = true }) {
   return (
     <>
-      {/* Country Header */}
-      <div className="country-title">
-        <h1>{country.name}</h1>
-        <span className="country-code-badge">{country.code}</span>
-      </div>
-      
+      {/* Country Header - only shown if showTitle is true */}
+      {showTitle && (
+        <div className="country-title">
+          <h1>{country.name}</h1>
+          <span className="country-code-badge">{country.code}</span>
+        </div>
+      )}
+
       {country.region && (
         <p className="country-region">📍 {country.region}</p>
       )}

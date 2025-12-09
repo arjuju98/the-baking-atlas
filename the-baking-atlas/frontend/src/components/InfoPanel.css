@@ -14,7 +14,7 @@
 
 .panel-backdrop.visible {
   opacity: 1;
-  pointer-events: all;
+  pointer-events: none;
 }
 
 /* Main Panel Container */
@@ -43,11 +43,12 @@
   position: sticky;
   top: 0;
   background: white;
-  padding: 20px;
+  padding: 20px 20px 20px 30px;
   border-bottom: 1px solid #e9ecef;
   z-index: 10;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .close-button {
@@ -62,6 +63,13 @@
   cursor: pointer;
   transition: background 0.2s;
   color: #2c3e50;
+  padding: 0;
+}
+
+.close-button svg {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
 }
 
 .close-button:hover {
@@ -76,14 +84,28 @@
 }
 
 /* Country Header in Panel */
-.country-title {
+.panel-header .country-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+}
+
+.panel-header .country-title h1 {
+  font-size: 1.5rem;
+  color: #2c3e50;
+  margin: 0;
+}
+
+/* Country title in content area (when showTitle is true) */
+.panel-content .country-title {
   display: flex;
   align-items: center;
   gap: 15px;
   margin-bottom: 12px;
 }
 
-.country-title h1 {
+.panel-content .country-title h1 {
   font-size: 2rem;
   color: #2c3e50;
   margin: 0;
@@ -101,7 +123,8 @@
 .country-region {
   color: #7f8c8d;
   font-size: 0.95rem;
-  margin-bottom: 30px;
+  margin-top: 20px;
+  margin-bottom: 25px;
 }
 
 /* Content Sections */
