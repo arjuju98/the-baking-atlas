@@ -4,6 +4,52 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 
 const MAPTILER_KEY = import.meta.env.VITE_MAPTILER_KEY;
 
+// Color palette for countries with data
+const COUNTRY_COLORS = [
+  '#667eea', // Purple-blue
+  '#f093fb', // Pink
+  '#4facfe', // Sky blue
+  '#43e97b', // Green
+  '#fa709a', // Rose
+  '#fee140', // Yellow
+  '#30cfd0', // Teal
+  '#a8edea', // Mint
+  '#ff9a9e', // Salmon
+  '#fbc2eb', // Light pink
+  '#a18cd1', // Lavender
+  '#fad0c4', // Peach
+  '#ffecd2', // Cream
+  '#fcb69f', // Coral
+  '#89f7fe', // Cyan
+];
+
+// Generate a consistent color for a country code
+const getCountryColor = (countryCode) => {
+  // Use char codes to generate a consistent index
+  const hash = countryCode.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  return COUNTRY_COLORS[hash % COUNTRY_COLORS.length];
+};
+
+// Generate a darker version of a hex color for borders
+const getDarkerColor = (hex) => {
+  // Remove # if present
+  const color = hex.replace('#', '');
+
+  // Parse RGB values
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+
+  // Darken by 30%
+  const factor = 0.7;
+  const newR = Math.round(r * factor);
+  const newG = Math.round(g * factor);
+  const newB = Math.round(b * factor);
+
+  // Convert back to hex
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+};
+
 function WorldMap({ countries, onCountryClick }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
@@ -78,13 +124,13 @@ function WorldMap({ countries, onCountryClick }) {
         'source-layer': 'administrative',
         filter: ['==', ['get', 'level'], 0],
         paint: {
-          'fill-color': '#667eea',
+          'fill-color': ['coalesce', ['feature-state', 'color'], 'transparent'],
           'fill-opacity': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
-            0.6,
+            0.7,
             ['boolean', ['feature-state', 'hasData'], false],
-            0.4,
+            0.5,
             0
           ]
         }
@@ -98,7 +144,7 @@ function WorldMap({ countries, onCountryClick }) {
         'source-layer': 'administrative',
         filter: ['==', ['get', 'level'], 0],
         paint: {
-          'line-color': '#764ba2',
+          'line-color': ['coalesce', ['feature-state', 'borderColor'], 'transparent'],
           'line-opacity': [
             'case',
             ['boolean', ['feature-state', 'hasData'], false],
@@ -217,10 +263,14 @@ function WorldMap({ countries, onCountryClick }) {
       if (!countryCode) return;
 
       const hasData = countryCodesWithData.has(countryCode);
+      const color = hasData ? getCountryColor(countryCode) : 'transparent';
+
+      // Generate a slightly darker border color
+      const borderColor = hasData ? getDarkerColor(color) : 'transparent';
 
       map.current.setFeatureState(
         { source: 'countries', sourceLayer: 'administrative', id: countryCode },
-        { hasData }
+        { hasData, color, borderColor }
       );
     });
   };
