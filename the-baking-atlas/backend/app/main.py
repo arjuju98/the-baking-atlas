@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.database.database import engine, Base
-from app.routes import countries
+from app.routes import countries, stories
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -28,6 +28,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(countries.router)
+app.include_router(stories.router)
 
 @app.get("/")
 def root():
