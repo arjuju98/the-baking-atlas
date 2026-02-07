@@ -1,7 +1,8 @@
 import { X } from 'lucide-react';
+import StoryCard from './StoryCard';
 import './InfoPanel.css';
 
-function InfoPanel({ isOpen, countryData, loading, error, onClose }) {
+function InfoPanel({ isOpen, countryData, loading, error, onClose, onStoryClick }) {
   // Don't render anything if not open
   if (!isOpen) return null;
 
@@ -44,7 +45,7 @@ function InfoPanel({ isOpen, countryData, loading, error, onClose }) {
           )}
 
           {!loading && !error && countryData && (
-            <CountryContent country={countryData} showTitle={false} />
+            <CountryContent country={countryData} showTitle={false} onStoryClick={onStoryClick} />
           )}
         </div>
       </div>
@@ -70,7 +71,7 @@ function LoadingSkeleton() {
 }
 
 // Main country content component
-function CountryContent({ country, showTitle = true }) {
+function CountryContent({ country, showTitle = true, onStoryClick }) {
   return (
     <>
       {/* Country Header - only shown if showTitle is true */}
@@ -148,7 +149,7 @@ function CountryContent({ country, showTitle = true }) {
               <div key={ingredient.id} className="item">
                 <h3>{ingredient.name}</h3>
                 <p className="item-description">{ingredient.description}</p>
-                
+
                 {ingredient.extra_data && (
                   <div className="item-details">
                     {Object.entries(ingredient.extra_data).map(([key, value]) => (
@@ -160,6 +161,22 @@ function CountryContent({ country, showTitle = true }) {
                   </div>
                 )}
               </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Stories */}
+      {country.stories && country.stories.length > 0 && (
+        <div className="content-section">
+          <h2>Stories</h2>
+          <div className="stories-list">
+            {country.stories.map((story) => (
+              <StoryCard
+                key={story.id}
+                story={story}
+                onClick={onStoryClick}
+              />
             ))}
           </div>
         </div>

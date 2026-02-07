@@ -299,6 +299,13 @@
   font-size: 0.95rem;
 }
 
+/* Stories List */
+.stories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 /* Mobile Responsiveness */
 @media (max-width: 768px) {
   .info-panel {

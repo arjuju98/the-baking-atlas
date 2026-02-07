@@ -50,7 +50,7 @@ const getDarkerColor = (hex) => {
   return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
 };
 
-function WorldMap({ countries, onCountryClick }) {
+function WorldMap({ countries, countriesWithStories = new Set(), onCountryClick }) {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const [hoveredCountry, setHoveredCountry] = useState(null);
@@ -58,12 +58,17 @@ function WorldMap({ countries, onCountryClick }) {
 
   // Use refs to always have current data in event handlers
   const countriesRef = useRef(countries);
+  const countriesWithStoriesRef = useRef(countriesWithStories);
   const onCountryClickRef = useRef(onCountryClick);
 
   // Keep refs up to date
   useEffect(() => {
     countriesRef.current = countries;
   }, [countries]);
+
+  useEffect(() => {
+    countriesWithStoriesRef.current = countriesWithStories;
+  }, [countriesWithStories]);
 
   useEffect(() => {
     onCountryClickRef.current = onCountryClick;
@@ -128,9 +133,11 @@ function WorldMap({ countries, onCountryClick }) {
           'fill-opacity': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
-            0.7,
+            0.8,
+            ['boolean', ['feature-state', 'hasStories'], false],
+            0.65,
             ['boolean', ['feature-state', 'hasData'], false],
-            0.5,
+            0.45,
             0
           ]
         }
@@ -263,6 +270,7 @@ function WorldMap({ countries, onCountryClick }) {
       if (!countryCode) return;
 
       const hasData = countryCodesWithData.has(countryCode);
+      const hasStories = countriesWithStoriesRef.current.has(countryCode);
       const color = hasData ? getCountryColor(countryCode) : 'transparent';
 
       // Generate a slightly darker border color
@@ -270,12 +278,12 @@ function WorldMap({ countries, onCountryClick }) {
 
       map.current.setFeatureState(
         { source: 'countries', sourceLayer: 'administrative', id: countryCode },
-        { hasData, color, borderColor }
+        { hasData, hasStories, color, borderColor }
       );
     });
   };
 
-  // Update states when countries change or map moves
+  // Update states when countries or stories change, or map moves
   useEffect(() => {
     if (!map.current) return;
 
@@ -294,7 +302,7 @@ function WorldMap({ countries, onCountryClick }) {
         map.current.off('moveend', handleUpdate);
       }
     };
-  }, [countries]);
+  }, [countries, countriesWithStories]);
 
   return (
     <div className="map-container">
