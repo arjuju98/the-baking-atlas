@@ -54,7 +54,7 @@ function StoryReader({ story, loading, error, onClose }) {
       <div className="story-reader-container">
         {/* Close Button */}
         <button className="story-close-button" onClick={onClose} aria-label="Close story">
-          <X size={24} />
+          <X size={28} />
         </button>
 
         {/* Scrollable Content */}
@@ -130,7 +130,7 @@ function StoryLoadingSkeleton({ onClose }) {
   return (
     <>
       <button className="story-close-button" onClick={onClose} aria-label="Close">
-        <X size={24} />
+        <X size={28} />
       </button>
       <div className="story-reader-content">
         <div className="story-loading-skeleton">

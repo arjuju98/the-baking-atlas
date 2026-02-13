@@ -30,6 +30,34 @@ const getCountryColor = (countryCode) => {
   return COUNTRY_COLORS[hash % COUNTRY_COLORS.length];
 };
 
+// Calculate rough centroid from a GeoJSON geometry
+const calculateCentroid = (geometry) => {
+  let coords = [];
+
+  // Extract all coordinates based on geometry type
+  if (geometry.type === 'Polygon') {
+    coords = geometry.coordinates[0]; // Outer ring
+  } else if (geometry.type === 'MultiPolygon') {
+    // Use the largest polygon (first one is usually the main landmass)
+    const largestPolygon = geometry.coordinates.reduce((largest, polygon) => {
+      return polygon[0].length > largest[0].length ? polygon : largest;
+    }, geometry.coordinates[0]);
+    coords = largestPolygon[0];
+  } else {
+    return null;
+  }
+
+  // Calculate centroid as average of all points
+  let sumLng = 0;
+  let sumLat = 0;
+  coords.forEach(([lng, lat]) => {
+    sumLng += lng;
+    sumLat += lat;
+  });
+
+  return [sumLng / coords.length, sumLat / coords.length];
+};
+
 // Generate a darker version of a hex color for borders
 const getDarkerColor = (hex) => {
   // Remove # if present
@@ -133,11 +161,9 @@ function WorldMap({ countries, countriesWithStories = new Set(), onCountryClick 
           'fill-opacity': [
             'case',
             ['boolean', ['feature-state', 'hover'], false],
-            0.8,
-            ['boolean', ['feature-state', 'hasStories'], false],
-            0.65,
+            0.7,
             ['boolean', ['feature-state', 'hasData'], false],
-            0.45,
+            0.5,
             0
           ]
         }
@@ -167,8 +193,41 @@ function WorldMap({ countries, countriesWithStories = new Set(), onCountryClick 
         }
       });
 
+      // Add source for story markers (will be populated dynamically)
+      map.current.addSource('story-markers', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] }
+      });
+
+      // Add circle layer for story markers
+      map.current.addLayer({
+        id: 'story-markers-circle',
+        type: 'circle',
+        source: 'story-markers',
+        paint: {
+          'circle-radius': 8,
+          'circle-color': '#667eea',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#ffffff',
+          'circle-opacity': 0.9
+        }
+      });
+
+      // Add text layer for story icon (book emoji or symbol)
+      map.current.addLayer({
+        id: 'story-markers-icon',
+        type: 'symbol',
+        source: 'story-markers',
+        layout: {
+          'text-field': '📖',
+          'text-size': 12,
+          'text-allow-overlap': true
+        }
+      });
+
       // Set initial feature states for countries with data
       updateCountryStates();
+      updateStoryMarkers();
     });
 
     // Hover effect - use the interactive layer for capturing events
@@ -250,6 +309,56 @@ function WorldMap({ countries, countriesWithStories = new Set(), onCountryClick 
     };
   }, []); // Empty deps - only initialize once
 
+  // Update story markers based on countries with stories
+  const updateStoryMarkers = () => {
+    if (!map.current || !map.current.isStyleLoaded()) return;
+
+    const source = map.current.getSource('story-markers');
+    if (!source) return;
+
+    // Query country features to get geometries
+    const features = map.current.querySourceFeatures('countries', {
+      sourceLayer: 'administrative',
+      filter: ['==', ['get', 'level'], 0]
+    });
+
+    // Build a map of country code to geometry (deduplicated)
+    const countryGeometries = new Map();
+    features.forEach(feature => {
+      const code = feature.properties.iso_a2;
+      if (code && !countryGeometries.has(code)) {
+        countryGeometries.set(code, feature.geometry);
+      }
+    });
+
+    // Create marker features for countries with stories
+    const markerFeatures = [];
+    countriesWithStoriesRef.current.forEach(countryCode => {
+      const geometry = countryGeometries.get(countryCode);
+      if (geometry) {
+        const centroid = calculateCentroid(geometry);
+        if (centroid) {
+          markerFeatures.push({
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: centroid
+            },
+            properties: {
+              countryCode
+            }
+          });
+        }
+      }
+    });
+
+    // Update the source
+    source.setData({
+      type: 'FeatureCollection',
+      features: markerFeatures
+    });
+  };
+
   // Update feature states when countries data changes
   const updateCountryStates = () => {
     if (!map.current || !map.current.isStyleLoaded()) return;
@@ -287,10 +396,14 @@ function WorldMap({ countries, countriesWithStories = new Set(), onCountryClick 
   useEffect(() => {
     if (!map.current) return;
 
-    const handleUpdate = () => updateCountryStates();
+    const handleUpdate = () => {
+      updateCountryStates();
+      updateStoryMarkers();
+    };
 
     if (map.current.isStyleLoaded()) {
       updateCountryStates();
+      updateStoryMarkers();
     }
 
     map.current.on('sourcedata', handleUpdate);
